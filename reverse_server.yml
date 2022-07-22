@@ -16,9 +16,9 @@
   vars:
    groups:
      - sate
-	 - newgroups
-	 - unggas
-	 - reptile
+     - newgroups
+     - unggas
+     - reptile
   tasks: 
      - name: Remove Groups
        ansible.builtin.group:
