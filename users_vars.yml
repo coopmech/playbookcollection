@@ -1,0 +1,13 @@
+---
+users:
+  - username: ayam
+    groups: sate
+  - username: bangau
+    groups: newgroups
+  - username: cicak
+    groups: newgroups
+  - username: kadal
+    groups: newgroups
+  - username: kambing
+    groups: sate
+	

@@ -1,0 +1,61 @@
+---
+- name: Delete All User Before
+  hosts: asia,serverd.lab.example.com
+  vars_files:
+     - vars/users_vars.yml
+  tasks: 
+     - name: Remove Users
+       user:
+          name: "{{ item.username }}"
+		  state: absent
+          remove: yes
+	   loop: "{{ users }}"
+
+- name: Delete All Before
+  hosts: asia,serverd.lab.example.com
+  vars:
+   groups:
+     - sate
+	 - newgroups
+	 - unggas
+	 - reptile
+  tasks: 
+     - name: Remove Groups
+       ansible.builtin.group:
+          name: "{{ item.groups }}"
+		  state: absent
+          remove: yes
+	   loop: "{{ groups }}"  
+	   
+- name: uninstall package
+  hosts: production,development
+  gather_facts: true
+  become: true
+  tasks:
+     - name: Uninstall HTTPD
+       yum:
+          name: httpd
+          autoremove: yes
+          state: absent
+     - name: Uninstall Mariadb
+       yum:
+          name: mariadb-server
+          autoremove: yes
+          state: absent
+     - name: Uninstall tmux
+       yum:
+          name: tmux
+          autoremove: yes
+          state: absent
+     - name: Stop and disable firewalld
+       service:
+          name: firewalld
+          state: stopped
+          enabled: False
+     - name: Remove Development Tools
+       service:
+          name: '@Development Tools'
+          state: absent
+      
+       
+     
