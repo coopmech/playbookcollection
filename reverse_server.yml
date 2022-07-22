@@ -7,9 +7,9 @@
      - name: Remove Users
        user:
           name: "{{ item.username }}"
-		  state: absent
+          state: absent
           remove: yes
-	   loop: "{{ users }}"
+       loop: "{{ users }}"
 
 - name: Delete All Before
   hosts: asia,serverd.lab.example.com
@@ -23,9 +23,9 @@
      - name: Remove Groups
        ansible.builtin.group:
           name: "{{ item.groups }}"
-		  state: absent
+	  state: absent
           remove: yes
-	   loop: "{{ groups }}"  
+       loop: "{{ groups }}"  
 	   
 - name: uninstall package
   hosts: production,development
