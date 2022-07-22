@@ -1,10 +1,109 @@
 ---
 - name: Create multiple local users
-  hosts: webservers
+  hosts: asia,serverd.lab.example.com
   vars_files:
      - vars/users_vars.yml
   tasks: 
-     - name: Add webadmin group
+     - name: Create Some Groups
        group:
-          name: webadmin
+          name: newgroups,sate,unggas,reptil
           state: present
+     - name: Create user accounts
+       user:
+          name: "{{ item.username }}"
+          groups: "{{ item.groups }}"
+       loop: "{{ users }}"
+     - name: adding secondary groups unggas
+       ansible.builtin.user:
+          name: ayam,bangau
+          groups: unggas
+          append: yes
+     - name: adding secondary groups reptil
+       ansible.builtin.user:
+          name: cicak,kadal
+          groups: reptil
+          append: yes 
+          
+- name: Install package non host group asia
+  hosts: serverd.lab.example.com
+  become: yes
+  tasks:
+     - name: Install package
+       yum:
+          name:
+            - httpd
+            - firewalld
+            - sshd
+          state: latest
+ 
+- name: Install development tools
+  hosts: development
+  become: yes
+  tasks:
+     - name: Install packages
+       yum: name={{ item }} state=present update_cache=yes
+          with_items:
+            - "@development-tools"
+          
+- name: Stop Firewall and disable firewalld
+  hosts: production
+  connection: ssh
+  become: yes
+  gather_facts: False
+  tasks:
+     - name: Stop and disable firewalld.
+       service:
+          name: firewalld
+          state: stopped
+          enabled: False
+       
+- name: Install Mariadb
+  hosts: development
+  become: yes
+  tasks:
+     - name: latest mariadb install
+       yum:
+          name:
+             - mariadb-server
+          state: latest
+     - name: mariadb enabled and running
+       service:
+          name: mariadb
+          enabled: true
+          state: started
+
+- name: Install tmux
+  hosts: production
+  become: yes
+  tasks:
+     - name: latest tmux install
+       yum:
+          name:
+             - tmux
+          state: latest
+          
+- name: Ensuring HTTP, Firewalld, SSH
+  hosts: development
+  become: yes
+  tasks:
+     - name: firewalld enabled and running
+       service:
+          name: firewalld
+          enabled: true
+          state: started          
+     - name: firewalld permits http service
+       firewalld:
+          service: http
+          permanent: true
+          state: enabled
+          immediate: yes
+     - name: httpd enabled and running
+       service:
+          name: httpd
+          enabled: true
+          state: started
+     - name: sshd enabled and running
+       service:
+          name: sshd
+          enabled: true
+          state: started
